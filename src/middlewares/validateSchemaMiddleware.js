@@ -1,11 +1,10 @@
 import { stripHtml } from "string-strip-html"
-import trim from "trim"
-import authSchema from "../schemas/authSchema"
-import financialEventsSchema from "../schemas/financialEventsSchema"
-import userSchema from "../schemas/userSchema"
+import authSchema from "../schemas/authSchema.js"
+import financialEventsSchema from "../schemas/financialEventsSchema.js"
+import userSchema from "../schemas/userSchema.js"
 
 function sanitizeString(string){
-    return trim(stripHtml(string).result)
+    return stripHtml(string).result.trim()
 }
 
 const schemas = {

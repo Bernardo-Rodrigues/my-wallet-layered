@@ -1,29 +1,12 @@
 import jwt from "jsonwebtoken";
 import connection from "../database.js";
+import * as financialEventsService from "../services/financialEventsService.js"
 
 export async function createEvent (req, res) {
+    const { user } = res.locals;
+
     try {
-        const authorization = req.headers.authorization || "";
-        const token = authorization.replace("Bearer ", "");
-    
-        if (!token) {
-            return res.sendStatus(401);
-        }
-    
-        let user;
-    
-        try {
-            user = jwt.verify(token, process.env.JWT_SECRET);
-        } catch {
-            return res.sendStatus(401);
-        }
-    
-        const { value, type } = req.body;
-    
-        await connection.query(
-            `INSERT INTO "financialEvents" ("userId", "value", "type") VALUES ($1, $2, $3)`,
-            [user.id, value, type]
-        );
+        financialEventsService.createEvent({...req.body, userId: user.id})
     
         res.sendStatus(201);
     } catch (err) {
@@ -33,28 +16,12 @@ export async function createEvent (req, res) {
 }
 
 export async function listUserEvents (req, res) {
+    const { user } = res.locals
+
     try {
-        const authorization = req.headers.authorization || "";
-        const token = authorization.replace("Bearer ", "");
+        const events = financialEventsService.listUserEvents(user)
     
-        if (!token) {
-            return res.sendStatus(401);
-        }
-    
-        let user;
-    
-        try {
-            user = jwt.verify(token, process.env.JWT_SECRET);
-        } catch {
-            return res.sendStatus(401);
-        }
-    
-        const events = await connection.query(
-            `SELECT * FROM "financialEvents" WHERE "userId"=$1 ORDER BY "id" DESC`,
-            [user.id]
-        );
-    
-        res.send(events.rows);
+        res.send(events);
     } catch (err) {
         console.error(err);
         res.sendStatus(500);
@@ -62,32 +29,10 @@ export async function listUserEvents (req, res) {
 }
 
 export async function getFinancialSum (req, res) {
+    const { user } = res.locals;
+
     try {
-        const authorization = req.headers.authorization || "";
-        const token = authorization.replace("Bearer ", "");
-    
-        if (!token) {
-            return res.sendStatus(401);
-        }
-    
-        let user;
-    
-        try {
-            user = jwt.verify(token, process.env.JWT_SECRET);
-        } catch {
-            return res.sendStatus(401);
-        }
-    
-        const events = await connection.query(
-            `SELECT * FROM "financialEvents" WHERE "userId"=$1 ORDER BY "id" DESC`,
-            [user.id]
-        );
-    
-        const sum = events.rows.reduce(
-            (total, event) =>
-            event.type === "INCOME" ? total + event.value : total - event.value,
-            0
-        );
+        const sum = financialEventsService.getFinancialSum(user)
     
         res.send({ sum });
     } catch (err) {
