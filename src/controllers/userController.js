@@ -5,10 +5,6 @@ export async function signUp(req, res) {
     try {
         const { name, email, password } = req.body;
     
-        if (!name || !email || !password) {
-            return res.sendStatus(422);
-        }
-    
         const existingUsers = await connection.query(
             `SELECT * FROM "users" WHERE "email"=$1`,
             [email]

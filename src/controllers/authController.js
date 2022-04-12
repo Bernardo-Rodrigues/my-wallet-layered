@@ -3,13 +3,8 @@ import jwt from "jsonwebtoken";
 import connection from "../database.js";
 
 export async function signIn (req, res)  {
+    const { email, password } = req.body;
     try {
-        const { email, password } = req.body;
-    
-        if (!email || !password) {
-            return res.sendStatus(422);
-        }
-    
         const { rows } = await connection.query(
             `SELECT * FROM "users" WHERE "email"=$1`,
             [email]

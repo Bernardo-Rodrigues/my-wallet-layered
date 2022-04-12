@@ -20,19 +20,6 @@ export async function createEvent (req, res) {
     
         const { value, type } = req.body;
     
-        if (!value || !type) {
-            return res.sendStatus(422);
-        }
-    
-        const financialTypes = ["INCOME", "OUTCOME"];
-        if (!financialTypes.includes(type)) {
-            return res.sendStatus(422);
-        }
-    
-        if (value < 0) {
-            return res.sendStatus(422);
-        }
-    
         await connection.query(
             `INSERT INTO "financialEvents" ("userId", "value", "type") VALUES ($1, $2, $3)`,
             [user.id, value, type]
