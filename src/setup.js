@@ -1,2 +1,2 @@
-import dotenv from "dotenv";
-dotenv.config({ path: ".env" });
+import "express-async-errors";
+import "dotenv/config"

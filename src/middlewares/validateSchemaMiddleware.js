@@ -1,4 +1,5 @@
 import { stripHtml } from "string-strip-html"
+import UnprocessableEntity from "../errors/UnprocessableEntityError.js"
 import authSchema from "../schemas/authSchema.js"
 import financialEventsSchema from "../schemas/financialEventsSchema.js"
 import userSchema from "../schemas/userSchema.js"
@@ -22,7 +23,7 @@ export default async function validateSchemaMiddleware(req, res, next){
     })
 
     const validation = schema.validate(body, { abortEarly: false })
-    if(validation.error) return res.status(422).send(validation.error.message)
+    if(validation.error) throw new UnprocessableEntity(validation.error.message);
 
     next()
 }
