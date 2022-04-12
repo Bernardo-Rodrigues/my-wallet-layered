@@ -1,12 +1,11 @@
 import connection from "../database.js"
 
 export async function find(column, value){
-    console.log("aqui")
     const { rows: [user] } = await connection.query(
         `SELECT * FROM "users" WHERE ${column}=$1`,
         [value]
     );
-console.log("aqui nao")
+    
     if(!user) return false;
     return user;
 }
