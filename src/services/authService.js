@@ -15,3 +15,18 @@ export async function signIn({ email, password }){
     );
     return token;
 }
+
+export async function validateToken(authorization){
+    const token = authorization?.replace("Bearer ", "");
+    if(!token) throw new Unauthorized("Invalid token");
+
+    let user
+
+    try {   
+        user = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+        throw new Unauthorized("Invalid token");
+    }
+
+    return user
+}
